@@ -13,6 +13,7 @@
 // limitations under the License.
 
 /// Grin server commands processing
+#[cfg(unix)]
 use std::env::current_dir;
 use std::process::exit;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -22,6 +23,8 @@ use std::time::Duration;
 
 use clap::ArgMatches;
 use ctrlc;
+
+#[cfg(unix)]
 use daemonize::Daemonize;
 
 use config::GlobalConfig;
@@ -157,6 +160,7 @@ pub fn server_command(server_args: Option<&ArgMatches>, mut global_config: Globa
 			("run", _) => {
 				start_server(server_config);
 			}
+			#[cfg(unix)]
 			("start", _) => {
 				let daemonize = Daemonize::new()
 					.pid_file("/tmp/grin.pid")

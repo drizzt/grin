@@ -20,6 +20,7 @@ extern crate chrono;
 extern crate clap;
 extern crate ctrlc;
 extern crate cursive;
+#[cfg(unix)]
 extern crate daemonize;
 extern crate serde;
 extern crate serde_json;
