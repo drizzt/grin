@@ -72,9 +72,16 @@ pub fn new_named_env(path: String, name: String) -> lmdb::Environment {
 		env_builder.set_maxdbs(8).unwrap();
 		// half a TB should give us plenty room, will be an issue on 32 bits
 		// (which we don't support anyway)
-		env_builder.set_mapsize(549755813888).unwrap_or_else(|e| {
-			panic!("Unable to allocate LMDB space: {:?}", e);
-		});
+		// FIXME Windows doesn't support a big allocation, use 1GB
+		if cfg!(unix) {
+			env_builder.set_mapsize(549755813888).unwrap_or_else(|e| {
+				panic!("Unable to allocate LMDB space: {:?}", e);
+			});
+		} else {
+			env_builder.set_mapsize(1073741824).unwrap_or_else(|e| {
+				panic!("Unable to allocate LMDB space: {:?}", e);
+			});
+		}
 
 		env_builder
 			.open(&full_path, lmdb::open::Flags::empty(), 0o600)
